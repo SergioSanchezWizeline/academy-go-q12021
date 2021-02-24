@@ -1,6 +1,6 @@
 package model
 
 type Character struct {
-	ID   uint
+	Id   int
 	Name string
 }

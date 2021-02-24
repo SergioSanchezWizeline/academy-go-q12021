@@ -5,7 +5,7 @@ import (
 )
 
 type getCharacter struct {
-	Reposiroty interfaces.CharacterRepository
+	Repository interfaces.CharacterRepository
 	Presenter  interfaces.GetCharacterPresenter
 }
 
@@ -18,7 +18,7 @@ func NewGetCharacterUseCase(repository interfaces.CharacterRepository, presenter
 }
 
 func (usecase *getCharacter) Execute(id int) (string, error) {
-	character, err := usecase.Reposiroty.Get(id)
+	character, err := usecase.Repository.Get(id)
 	if err != nil {
 		return "", err
 	}
