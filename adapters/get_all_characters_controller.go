@@ -1,9 +1,10 @@
 package adapters
 
 import (
-	"bootcamp/domain/model"
+	"bootcamp/helper"
 	"bootcamp/usecase"
 	"bootcamp/usecase/interfaces"
+	"fmt"
 )
 
 type getAllCharactersController struct {
@@ -23,11 +24,7 @@ func NewGetAllCharactersController(repository interfaces.CharacterRepository) Ge
 func (controller *getAllCharactersController) Execute() (string, error) {
 	characters, err := controller.UseCase.Execute()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("Error getting all characters: %w", err)
 	}
-	return controller.Present(characters), nil
-}
-
-func (controller *getAllCharactersController) Present(characters []*model.Character) string {
-	return "todos"
+	return helper.ToJson(characters)
 }

@@ -1,7 +1,7 @@
 package adapters
 
 import (
-	"bootcamp/domain/model"
+	"bootcamp/helper"
 	"bootcamp/usecase"
 	"bootcamp/usecase/interfaces"
 	"fmt"
@@ -24,11 +24,7 @@ func NewGetCharacterController(repository interfaces.CharacterRepository) GetCha
 func (controller *getCharacterController) Execute(id int) (string, error) {
 	character, err := controller.UseCase.Execute(id)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("Error getting the character: %w", err)
 	}
-	return controller.Present(character), nil
-}
-
-func (controller *getCharacterController) Present(character *model.Character) string {
-	return fmt.Sprintf("{ \"id\": %v, \"name\": \"%v\"}", character.Id, character.Name)
+	return helper.ToJson(character)
 }
