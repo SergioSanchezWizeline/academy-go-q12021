@@ -23,3 +23,15 @@ func NewGetCharacterHandler(getCharacterController adapters.GetCharacterControll
 		fmt.Fprint(writer, result)
 	}
 }
+
+func NewGetAllCharactersHandler(getCharacterController adapters.GetAllCharactersController) func(writer http.ResponseWriter, request *http.Request) {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		result, err := getCharacterController.Execute()
+		if err != nil {
+			fmt.Fprintf(writer, "{\"error\": \"%v\"}", err)
+			return
+		}
+
+		fmt.Fprint(writer, result)
+	}
+}
