@@ -3,7 +3,7 @@ package adapters
 import (
 	"bootcamp/domain/model"
 	"bootcamp/infra/datastore"
-	"bootcamp/usecases/interfaces"
+	"bootcamp/usecase/interfaces"
 	"fmt"
 	"strconv"
 	"strings"

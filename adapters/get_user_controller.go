@@ -2,28 +2,31 @@ package adapters
 
 import (
 	"bootcamp/domain/model"
-	"bootcamp/usecases"
-	"bootcamp/usecases/interfaces"
+	"bootcamp/usecase"
+	"bootcamp/usecase/interfaces"
 	"fmt"
 )
 
 type getCharacterController struct {
-	UseCase usecases.GetCharacterUserCase
+	UseCase usecase.GetCharacterUserCase
 }
 
 type GetCharacterController interface {
 	Execute(id int) (string, error)
-	Present(character *model.Character) string
 }
 
 func NewGetCharacterController(repository interfaces.CharacterRepository) GetCharacterController {
 	controller := &getCharacterController{}
-	controller.UseCase = usecases.NewGetCharacterUseCase(repository, controller)
+	controller.UseCase = usecase.NewGetCharacterUseCase(repository)
 	return controller
 }
 
 func (controller *getCharacterController) Execute(id int) (string, error) {
-	return controller.UseCase.Execute(id)
+	character, err := controller.UseCase.Execute(id)
+	if err != nil {
+		return "", err
+	}
+	return controller.Present(character), nil
 }
 
 func (controller *getCharacterController) Present(character *model.Character) string {

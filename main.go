@@ -2,10 +2,10 @@ package main
 
 import (
 	"bootcamp/adapters"
+	"bootcamp/infra/net"
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 func main() {
@@ -14,24 +14,10 @@ func main() {
 	getCharacterController := adapters.NewGetCharacterController(repository)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Hello there!")
+		fmt.Fprint(w, "Go bootcamp challenge v1")
 	})
 
-	http.HandleFunc("/character/", func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.URL.Path[len("/character/"):]
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			fmt.Fprintf(w, "{\"error\": \"%v\"}", err)
-			return
-		}
-		result, err := getCharacterController.Execute(id)
-		if err != nil {
-			fmt.Fprintf(w, "{\"error\": \"%v\"}", err)
-			return
-		}
-
-		fmt.Fprint(w, result)
-	})
+	http.HandleFunc("/character/", net.NewGetCharacterHandler(getCharacterController))
 
 	fmt.Println("Server started")
 	log.Fatal(http.ListenAndServe(":8080", nil))
