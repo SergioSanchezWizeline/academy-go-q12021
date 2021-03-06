@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -14,13 +16,16 @@ func main() {
 	getCharacterController := adapters.NewGetCharacterController(repository)
 	getAllCharactersController := adapters.NewGetAllCharactersController(repository)
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	router := mux.NewRouter()
+	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Go bootcamp challenge v1")
 	})
 
-	http.HandleFunc("/character/", net.NewGetCharacterHandler(getCharacterController))
-	http.HandleFunc("/character/all", net.NewGetAllCharactersHandler(getAllCharactersController))
+	characterRouter := router.PathPrefix("/character").Subrouter()
+	characterRouter.HandleFunc("/", net.NewGetAllCharactersHandler(getAllCharactersController))
+	characterRouter.HandleFunc("/{id:[0-9]+}", net.NewGetCharacterHandler(getCharacterController))
 
 	fmt.Println("Server started")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	http.Handle("/", router)
+	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 }

@@ -10,8 +10,7 @@ import (
 )
 
 type fileStoreCharacterRepository struct {
-	characters    []*model.Character
-	charactersMap map[int]*model.Character
+	characters map[int]*model.Character
 }
 
 func NewCharacterRepository() interfaces.CharacterRepository {
@@ -31,18 +30,16 @@ func (repository *fileStoreCharacterRepository) load() error {
 	content := string(data)
 	lines := strings.Split(content, "\n")
 
-	repository.characters = make([]*model.Character, len(lines))
-	repository.charactersMap = make(map[int]*model.Character)
+	repository.characters = make(map[int]*model.Character)
 
-	for index, line := range lines {
+	for _, line := range lines {
 		parts := strings.Split(line, ",")
 		id, err := strconv.Atoi(parts[0])
 		if err != nil {
 			return err
 		}
 		character := &model.Character{Id: id, Name: parts[1]}
-		repository.characters[index] = character
-		repository.charactersMap[character.Id] = character
+		repository.characters[character.Id] = character
 	}
 	return nil
 }
@@ -52,7 +49,11 @@ func (repository *fileStoreCharacterRepository) All() ([]*model.Character, error
 	if err != nil {
 		return nil, err
 	}
-	return repository.characters, nil
+	characterList := make([]*model.Character, 0, len(repository.characters))
+	for _, character := range repository.characters {
+		characterList = append(characterList, character)
+	}
+	return characterList, nil
 }
 
 func (repository *fileStoreCharacterRepository) Get(id int) (*model.Character, error) {
@@ -60,7 +61,7 @@ func (repository *fileStoreCharacterRepository) Get(id int) (*model.Character, e
 	if err != nil {
 		return nil, err
 	}
-	if character, ok := repository.charactersMap[id]; ok {
+	if character, ok := repository.characters[id]; ok {
 		return character, nil
 	}
 	return nil, fmt.Errorf("Character with id: %v not found", id)

@@ -2,36 +2,39 @@ package net
 
 import (
 	"bootcamp/adapters"
-	"bootcamp/helper"
 	"fmt"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
-func NewGetCharacterHandler(getCharacterController adapters.GetCharacterController) func(writer http.ResponseWriter, request *http.Request) {
-	return func(writer http.ResponseWriter, request *http.Request) {
-		id, err := helper.ExtractId("/character/", request.URL.Path)
+func NewGetCharacterHandler(getCharacterController adapters.GetCharacterController) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			fmt.Fprintf(writer, "{\"error\": \"%v\"}", err)
+			fmt.Fprintf(w, "{\"error\": \"%v\"}", err)
 			return
 		}
 		result, err := getCharacterController.Execute(id)
 		if err != nil {
-			fmt.Fprintf(writer, "{\"error\": \"%v\"}", err)
+			fmt.Fprintf(w, "{\"error\": \"%v\"}", err)
 			return
 		}
 
-		fmt.Fprint(writer, result)
+		fmt.Fprint(w, result)
 	}
 }
 
-func NewGetAllCharactersHandler(getCharacterController adapters.GetAllCharactersController) func(writer http.ResponseWriter, request *http.Request) {
-	return func(writer http.ResponseWriter, request *http.Request) {
+func NewGetAllCharactersHandler(getCharacterController adapters.GetAllCharactersController) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		result, err := getCharacterController.Execute()
 		if err != nil {
-			fmt.Fprintf(writer, "{\"error\": \"%v\"}", err)
+			fmt.Fprintf(w, "{\"error\": \"%v\"}", err)
 			return
 		}
 
-		fmt.Fprint(writer, result)
+		fmt.Fprint(w, result)
 	}
 }
